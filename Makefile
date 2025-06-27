@@ -6,7 +6,7 @@ RM      := rm -f
 SRCDIR  := .
 OBJDIR  := obj
 
-SOURCES := philosophers.c parser.c time.c init.c sim.c monitor.c utils.c cleanup.c
+SOURCES := 
 SRCS    := $(addprefix $(SRCDIR)/, $(SOURCES))
 OBJS    := $(addprefix $(OBJDIR)/, $(SOURCES:.c=.o))
 

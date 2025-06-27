@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 19:48:34 by emuzun            #+#    #+#             */
-/*   Updated: 2025/06/26 19:48:35 by emuzun           ###   ########.fr       */
+/*   Created: 2025/06/26 19:48:53 by emuzun            #+#    #+#             */
+/*   Updated: 2025/06/26 19:48:54 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philosophers.h"
-
-int main(int argc, char **argv)
+exit_app(const char *msg, int error_flag, t_sim sim)
 {
-	t_simulator simulator;
-
-	if(argc != 5 && argc != 6)
+	if(error_flag == 1)
 	{
-		exit_app("Argument count must be 5 or 6 \n", 1, sim)
+		printf(RED "%s", msg);
+		exit(EXIT_FAIURE)
 	}
-	if(parse_data(argv, &simulator))
-		exit_app("Parsing Failed");
-	init_forks(&simulator);
-	init_philo(&simulator);
-	trigger_threads(&simulator);
-	exit_app(NULL, 0, &simulator);
 }
