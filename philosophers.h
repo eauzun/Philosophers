@@ -5,70 +5,66 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 19:48:42 by emuzun            #+#    #+#             */
-/*   Updated: 2025/06/26 19:48:43 by emuzun           ###   ########.fr       */
+/*   Created: 2025/08/23 15:06:08 by emuzun            #+#    #+#             */
+/*   Updated: 2025/08/23 16:44:38 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
-# define  PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 
-#include <limits.h>
-#include <pthread.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include<unistd.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <pthread.h>
+# include <sys/time.h>
+# include <string.h>
+# include <stdlib.h>
 
-#define PHILO_MAX 200
+typedef struct s_philo
+{
+	int				id;
+	int				meals_eaten;
+	int				left_fork;
+	int				right_fork;
+	long long		last_meal;
+	pthread_t		thread;
+	struct s_data	*data;
+}	t_philo;
 
-# define COLOR_RED "\033[31m"
-# define COLOR_GREEN "\033[32m"
-# define COLOR_YELLOW "\033[33m"
-# define COLOR_BLUE "\033[34m"
-# define COLOR_MAGENTA "\033[35m"
-# define COLOR_CYAN "\033[36m"
-# define COLOR_WHITE "\033[37m"
-# define COLOR_RESET "\033[0m"
+typedef struct s_data
+{
+	int				nb_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nb_must_eat;
+	int				died;
+	int				all_ate;
+	long long		start_time;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	writing;
+	pthread_mutex_t	meal_check;
+	t_philo			*philos;
+}	t_data;
+
+// init.c
+int			init_all(t_data *data, char **argv);
+int			init_mutex(t_data *data);
+int			init_philosophers(t_data *data);
+
+// utils.c
+int			ft_atoi(const char *str);
+void		print_action(t_data *data, int id, char *string);
+long long	timestamp(void);
+long long	time_diff(long long past, long long pres);
+void		smart_sleep(long long time, t_data *data);
+
+// routine.c
+void		*p_thread(void *void_philosopher);
+void		philo_eats(t_philo *philo);
+void		exit_threads(t_data *data, t_philo *philos);
+
+// monitor.c
+void		death_checker(t_data *d, t_philo *p);
 
 #endif
-
-
-int	ft_isspace(char c);
-int	ft_is_digit(char c);
-int	ft_atoi(const char *str);
-int parse_data(char **argv, t_sim *table);
-
-
-typedef struct s_philosophers
-{
-	size_t id;
-	size_t eaten_meals;
-	int eating;
-	size_t last_meal;
-	pthread_t	thread;
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t *right fork;
-	t_simulator	*sim;
-	pthread_mutex_t	mutex;
-
-}t_philosophers;
-
-typedef struct s_simulator
-{
-	int philo_count;
-	int time_to_die;
-	int time_to_sleep;
-	int time_to_eat;
-	int	eat_count;
-	int	full_philosophers;
-	int	is_anyone_dead;
-	size_t	start_time;
-	pthread_mutex_t		write_lock;
-	pthread_mutex_t		dead_lock;
-	pthread_mutex_t		meal_lock;
-	pthread_mutex_t		full_lock;
-	pthread_mutex_t		*forks;
-	t_philosophers				*philos;
-	struct timeval		begin_time;
-}t_simulator;
-

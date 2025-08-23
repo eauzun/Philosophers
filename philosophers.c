@@ -5,25 +5,43 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 19:48:34 by emuzun            #+#    #+#             */
-/*   Updated: 2025/06/26 19:48:35 by emuzun           ###   ########.fr       */
+/*   Created: 2025/08/23 16:44:02 by emuzun            #+#    #+#             */
+/*   Updated: 2025/08/23 16:44:16 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philosophers.h"
 
-int main(int argc, char **argv)
+#include "philosophers.h"
+
+int	error_manager(int error)
 {
-	t_simulator simulator;
+	if (error == 1)
+		printf("Wrong amount of arguments\n");
+	if (error == 2)
+		printf("Invalid arguments\n");
+	return (1);
+}
 
-	if(argc != 5 && argc != 6)
+int	main(int argc, char **argv)
+{
+	t_data	data;
+	int		i;
+
+	if (argc != 5 && argc != 6)
+		return (error_manager(1));
+	if (init_all(&data, argv))
+		return (error_manager(2));
+	if (init_philosophers(&data))
+		return (error_manager(2));
+	i = -1;
+	while (++i < data.nb_philo)
 	{
-		exit_app("Argument count must be 5 or 6 \n", 1, sim)
+		if (pthread_create(&(data.philos[i].thread), NULL,
+				p_thread, &(data.philos[i])))
+			return (1);
+		data.philos[i].last_meal = timestamp();
 	}
-	if(parse_data(argv, &simulator))
-		exit_app("Parsing Failed");
-	init_forks(&simulator);
-	init_philo(&simulator);
-	trigger_threads(&simulator);
-	exit_app(NULL, 0, &simulator);
+	death_checker(&data, data.philos);
+	exit_threads(&data, data.philos);
+	return (0);
 }
