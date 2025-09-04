@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/01 12:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/09/04 17:55:37 by emuzun           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "philosophers.h"
 
-void	cleanup_all(t_data *data, t_philo *philos)
+void	destroy_mutexes(t_data *data)
 {
 	int	i;
 
@@ -25,9 +13,23 @@ void	cleanup_all(t_data *data, t_philo *philos)
 			i++;
 		}
 		free(data->forks);
+		data->forks = NULL;
 	}
-	pthread_mutex_destroy(&data->print_lock);
-	pthread_mutex_destroy(&data->state_lock);
+	pthread_mutex_destroy(&data->print_mutex);
+	pthread_mutex_destroy(&data->data_mutex);
+}
+
+void	cleanup_data(t_data *data)
+{
+	destroy_mutexes(data);
+}
+
+void	cleanup_philos(t_philo *philos, t_data *data)
+{
 	if (philos)
+	{
 		free(philos);
+		philos = NULL;
+	}
+	(void)data; // Prevent unused parameter warning
 }

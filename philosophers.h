@@ -1,27 +1,16 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philosophers.h                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/01 12:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/09/04 17:55:53 by emuzun           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <string.h>
 
 # define SUCCESS 0
 # define ERROR 1
-# define MAX_RECURSION 3
+# define DEAD 2
 
 typedef struct s_data
 {
@@ -30,47 +19,58 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_count;
+	int				finished_eating;
 	long long		start_time;
 	int				dead_flag;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_lock;
-	pthread_mutex_t	state_lock;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	data_mutex;
 }	t_data;
 
 typedef struct s_philo
 {
 	int				id;
 	int				eat_count;
-	int				recursion_depth;
-	long long		last_meal;
+	long long		last_meal_time;
 	pthread_t		thread;
 	t_data			*data;
-	struct s_philo	*left_neighbor;
-	struct s_philo	*right_neighbor;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 }	t_philo;
 
-/* Core Functions */
-int			parse_args(t_data *data, int argc, char **argv);
-int			init_simulation(t_data *data, t_philo **philos);
-int			start_threads(t_philo *philos, t_data *data);
-void		cleanup_all(t_data *data, t_philo *philos);
+/* Utils */
+int			ft_atoi(const char *str);
+int			ft_isdigit(int c);
+int			ft_strlen(const char *str);
+long long	get_time(void);
+void		ft_usleep(long long milliseconds);
+void		print_status(t_philo *philo, char *status);
 
-/* Recursive Logic */
-int			recursive_state_check(t_philo *philo, int depth);
-int			recursive_fork_attempt(t_philo *philo, int depth);
-void		recursive_influence_neighbors(t_philo *philo, int depth);
+/* Init */
+int			init_data(t_data *data, int argc, char **argv);
+int			init_philos(t_philo **philos, t_data *data);
+int			init_mutexes(t_data *data);
+
+/* Threads */
+void		*philo_routine(void *arg);
+void		*monitor_routine(void *arg);
+int			start_simulation(t_philo *philos, t_data *data);
 
 /* Actions */
-void		*philo_life(void *arg);
-void		*death_monitor(void *arg);
-void		eat_routine(t_philo *philo);
-void		sleep_and_think(t_philo *philo);
+void		philo_eat(t_philo *philo);
+void		philo_sleep(t_philo *philo);
+void		philo_think(t_philo *philo);
+int			take_forks(t_philo *philo);
+void		put_forks(t_philo *philo);
 
-/* Utils */
-long long	get_time_ms(void);
-void		precise_sleep(long long ms);
-void		safe_print(t_philo *philo, char *msg);
-int			is_dead(t_data *data);
-int			ft_atoi(const char *str);
+/* Cleanup */
+void		cleanup_data(t_data *data);
+void		cleanup_philos(t_philo *philos, t_data *data);
+void		destroy_mutexes(t_data *data);
+
+/* Validation */
+int			validate_args(int argc, char **argv);
+int			is_simulation_over(t_data *data);
+int			check_philosopher_death(t_philo *philos, t_data *data);
 
 #endif

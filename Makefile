@@ -1,22 +1,12 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/01/01 12:00:00 by student           #+#    #+#              #
-#    Updated: 2025/09/04 17:55:37 by emuzun           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-NAME = philosophers
+NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g
+CFLAGS = -Wall -Wextra -Werror -pthread
 RM = rm -f
 
-SOURCES = philosophers.c init.c recursive.c actions.c threads.c utils.c cleanup.c
+SRCDIR = .
+SOURCES = main.c  utils.c init.c thread.c action.c valid.c cleanup.c
+
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(NAME)
