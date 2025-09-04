@@ -5,70 +5,64 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/23 16:40:23 by emuzun            #+#    #+#             */
-/*   Updated: 2025/08/23 16:42:02 by emuzun           ###   ########.fr       */
+/*   Created: 2024/01/01 12:00:00 by student           #+#    #+#             */
+/*   Updated: 2025/09/04 17:55:37 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+long long	get_time_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+void	precise_sleep(long long ms)
+{
+	long long	start;
+
+	start = get_time_ms();
+	while ((get_time_ms() - start) < ms)
+		usleep(500);
+}
+
+void	safe_print(t_philo *philo, char *msg)
+{
+	long long	timestamp;
+
+	pthread_mutex_lock(&philo->data->print_lock);
+	if (!is_dead(philo->data))
+	{
+		timestamp = get_time_ms() - philo->data->start_time;
+		printf("%lld %d %s\n", timestamp, philo->id, msg);
+	}
+	pthread_mutex_unlock(&philo->data->print_lock);
+}
+
+int	is_dead(t_data *data)
+{
+	int	result;
+
+	pthread_mutex_lock(&data->state_lock);
+	result = data->dead_flag;
+	pthread_mutex_unlock(&data->state_lock);
+	return (result);
+}
+
 int	ft_atoi(const char *str)
 {
-	long int	n;
-	int			sign;
+	int	result;
+	int	i;
 
-	n = 0;
-	sign = 1;
-	while ((*str <= 13 && *str >= 9) || *str == 32)
-		str++;
-	if (*str == '-')
-		return (-1);
-	else if (*str == '+')
-		str++;
-	while (*str)
+	result = 0;
+	i = 0;
+	while (str[i] >= '0' && str[i] <= '9')
 	{
-		if (*str >= '0' && *str <= '9')
-			n = n * 10 + (*str++ - '0');
-		else
-			return (-1);
+		result = result * 10 + (str[i] - '0');
+		i++;
 	}
-	return ((int)(n * sign));
-}
-
-void	print_action(t_data *data, int id, char *string)
-{
-	pthread_mutex_lock(&(data->writing));
-	if (!(data->died))
-	{
-		printf("%lld ", timestamp() - data->start_time);
-		printf("%d ", id + 1);
-		printf("%s\n", string);
-	}
-	pthread_mutex_unlock(&(data->writing));
-}
-
-long long	timestamp(void)
-{
-	struct timeval	t;
-
-	gettimeofday(&t, NULL);
-	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
-}
-
-long long	time_diff(long long past, long long pres)
-{
-	return (pres - past);
-}
-
-void	smart_sleep(long long time, t_data *data)
-{
-	long long	i;
-
-	i = timestamp();
-	while (!(data->died))
-	{
-		if (time_diff(i, timestamp()) >= time)
-			break ;
-		usleep(50);
-	}
+	return (result);
 }

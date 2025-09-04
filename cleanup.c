@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,38 +12,22 @@
 
 #include "philosophers.h"
 
-static int	validate_input(int argc, char **argv)
+void	cleanup_all(t_data *data, t_philo *philos)
 {
 	int	i;
 
-	if (argc < 5 || argc > 6)
-		return (printf("Usage: %s nb_philos time_die time_eat time_sleep [must_eat]\n", argv[0]), ERROR);
-	i = 1;
-	while (i < argc)
+	if (data->forks)
 	{
-		if (ft_atoi(argv[i]) <= 0)
-			return (printf("Error: Invalid argument %s\n", argv[i]), ERROR);
-		i++;
+		i = 0;
+		while (i < data->nb_philos)
+		{
+			pthread_mutex_destroy(&data->forks[i]);
+			i++;
+		}
+		free(data->forks);
 	}
-	return (SUCCESS);
-}
-
-int	main(int argc, char **argv)
-{
-	t_data	data;
-	t_philo	*philos;
-
-	if (validate_input(argc, argv) == ERROR)
-		return (ERROR);
-	if (parse_args(&data, argc, argv) == ERROR)
-		return (ERROR);
-	if (init_simulation(&data, &philos) == ERROR)
-		return (ERROR);
-	if (start_threads(philos, &data) == ERROR)
-	{
-		cleanup_all(&data, philos);
-		return (ERROR);
-	}
-	cleanup_all(&data, philos);
-	return (SUCCESS);
+	pthread_mutex_destroy(&data->print_lock);
+	pthread_mutex_destroy(&data->state_lock);
+	if (philos)
+		free(philos);
 }

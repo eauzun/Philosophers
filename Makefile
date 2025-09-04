@@ -1,27 +1,34 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/01/01 12:00:00 by student           #+#    #+#              #
+#    Updated: 2025/09/04 17:55:37 by emuzun           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = philosophers
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread
+CFLAGS = -Wall -Wextra -Werror -pthread -g
 RM = rm -f
 
-SRCS = philosophers.c \
-       init.c \
-       utils.c \
-       routine.c \
-       monitor.c
-
-OBJS = $(SRCS:.c=.o)
+SOURCES = philosophers.c init.c recursive.c actions.c threads.c utils.c cleanup.c
+OBJECTS = $(SOURCES:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
+$(NAME): $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(NAME)
 
-%.o: %.c philo.h
+%.o: %.c philosophers.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJECTS)
 
 fclean: clean
 	$(RM) $(NAME)
