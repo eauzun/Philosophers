@@ -10,8 +10,6 @@ int	take_forks(t_philo *philo)
 		ft_usleep(philo->data->time_to_die + 1);
 		return (ERROR);
 	}
-
-	// Even philosophers take left fork first, odd take right first (deadlock prevention)
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->left_fork);
@@ -60,8 +58,6 @@ void	philo_sleep(t_philo *philo)
 void	philo_think(t_philo *philo)
 {
 	print_status(philo, "is thinking");
-	
-	// Add small thinking time to prevent busy waiting
 	if (philo->data->nb_philos % 2 == 1)
-		ft_usleep(1);
+		ft_usleep(200);
 }

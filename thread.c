@@ -6,9 +6,9 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	
-	// Stagger start times for even philosophers to prevent initial deadlock
+
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		ft_usleep(200);
 
 	while (!is_simulation_over(philo->data))
 	{
@@ -28,13 +28,13 @@ void	*monitor_routine(void *arg)
 	t_philo	*philos;
 	
 	philos = (t_philo *)arg;
-	ft_usleep(1); // Give philosophers time to start
+	ft_usleep(200); 
 	
 	while (!is_simulation_over(philos->data))
 	{
 		if (check_philosopher_death(philos, philos->data) == DEAD)
 			break;
-		ft_usleep(1); // Check every 1ms
+		ft_usleep(200); 
 	}
 	return (NULL);
 }
@@ -54,8 +54,6 @@ static int	create_threads(t_philo *philos, t_data *data, pthread_t *monitor)
 			pthread_mutex_lock(&data->data_mutex);
 			data->dead_flag = 1;
 			pthread_mutex_unlock(&data->data_mutex);
-			
-			// Join already created threads
 			while (--i >= 0)
 				pthread_join(philos[i].thread, NULL);
 			pthread_join(*monitor, NULL);
