@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   action.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/05 13:10:42 by emuzun            #+#    #+#             */
+/*   Updated: 2025/09/05 13:20:19 by emuzun           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
 int	take_forks(t_philo *philo)
@@ -37,14 +49,11 @@ void	philo_eat(t_philo *philo)
 {
 	if (take_forks(philo) == ERROR)
 		return ;
-		
 	print_status(philo, "is eating");
-	
 	pthread_mutex_lock(&philo->data->data_mutex);
 	philo->last_meal_time = get_time();
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->data->data_mutex);
-	
 	ft_usleep(philo->data->time_to_eat);
 	put_forks(philo);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/05 13:10:40 by emuzun            #+#    #+#             */
+/*   Updated: 2025/09/05 13:19:06 by emuzun           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
 void	destroy_mutexes(t_data *data)
@@ -31,5 +43,5 @@ void	cleanup_philos(t_philo *philos, t_data *data)
 		free(philos);
 		philos = NULL;
 	}
-	(void)data; // Prevent unused parameter warning
+	(void)data;
 }

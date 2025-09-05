@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 RM = rm -f
 
 SRCDIR = .
-SOURCES = main.c  utils.c init.c thread.c action.c valid.c cleanup.c
+SOURCES = main.c  utils.c init.c thread.c action.c valid.c cleanup.c libft_utils.c check_situations.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
